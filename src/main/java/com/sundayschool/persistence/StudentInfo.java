@@ -30,16 +30,11 @@ public class StudentInfo {
     public static Map<String, String> categoryMapLookup = new HashMap<String, String>();
 
     static {
-        categoryMapLookup.put(BIBLE_QUIZ, "BQ");
-        categoryMapLookup.put(DRAWING, "DR");
-        categoryMapLookup.put(ESSAY_WRITING, "ES");
-        categoryMapLookup.put(STORY_WRITING, "ST");
-        categoryMapLookup.put(POETRY, "PE");
-//        categoryMapLookup.put(GROUP_SONG_ENGLISH, "GE");
-//        categoryMapLookup.put(GROUP_SONG_MALAYALAM, "GM");
-//        categoryMapLookup.put(SOLO_SONG_ENGLISH, "SE");
-//        categoryMapLookup.put(SOLO_SONG_MALAYALAM, "SM");
-//        categoryMapLookup.put(ELOCUTION, "EL");
+        categoryMapLookup.put(GROUP_SONG_ENGLISH, "GE");
+        categoryMapLookup.put(GROUP_SONG_MALAYALAM, "GM");
+        categoryMapLookup.put(SOLO_SONG_ENGLISH, "SE");
+        categoryMapLookup.put(SOLO_SONG_MALAYALAM, "SM");
+        categoryMapLookup.put(ELOCUTION, "EL");
     }
 
     public StudentInfo() {

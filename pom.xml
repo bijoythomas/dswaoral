@@ -233,7 +233,7 @@
             <properties>
                 <db.username>admin69pK5Qj</db.username>
                 <db.password>gMFdLrtiZ7TU-</db.password>
-                <db.schema>oral</db.schema>
+                <db.schema>dswa</db.schema>
             </properties>
             <build>
                 <finalName>oral</finalName>

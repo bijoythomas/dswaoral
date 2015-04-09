@@ -340,8 +340,8 @@ public class RegistrationBean {
     }
 
     public List<String> getAvailableCategories() {
-        return Arrays.asList(BIBLE_QUIZ, DRAWING, ESSAY_WRITING, STORY_WRITING, POETRY);
-//        return Arrays.asList(GROUP_SONG_ENGLISH, GROUP_SONG_MALAYALAM, SOLO_SONG_ENGLISH, SOLO_SONG_MALAYALAM, ELOCUTION);
+//        return Arrays.asList(BIBLE_QUIZ, DRAWING, ESSAY_WRITING, STORY_WRITING, POETRY);
+        return Arrays.asList(GROUP_SONG_ENGLISH, GROUP_SONG_MALAYALAM, SOLO_SONG_ENGLISH, SOLO_SONG_MALAYALAM, ELOCUTION);
     }
 
     public void setAvailableCategories(List<String> availableCategories) {
