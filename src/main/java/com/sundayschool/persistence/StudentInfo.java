@@ -165,11 +165,9 @@ public class StudentInfo {
     }
 
     public int getTotalMarks() {
-//        List<Integer> scores = new LinkedList<Integer>(Arrays.asList(judge1Marks, judge2Marks, judge3Marks, judge4Marks, judge5Marks, judge6Marks));
-        List<Integer> scores = new LinkedList<Integer>(Arrays.asList(judge1Marks, judge2Marks, judge3Marks));
-        return (scores.get(0) + scores.get(1) + scores.get(2)) / 3;
-//        Collections.sort(scores);
-//        return (scores.get(1) + scores.get(2) + scores.get(3) + scores.get(4)) / 4;
+        List<Integer> scores = new LinkedList<Integer>(Arrays.asList(judge1Marks, judge2Marks, judge3Marks, judge4Marks, judge5Marks, judge6Marks));
+        Collections.sort(scores);
+        return (scores.get(1) + scores.get(2) + scores.get(3) + scores.get(4)) / 4;
     }
 
     public void setTotalMarks(int totalMarks) {

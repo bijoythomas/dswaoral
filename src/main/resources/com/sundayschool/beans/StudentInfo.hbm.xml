@@ -4,7 +4,7 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.sundayschool.persistence.StudentInfo" table="ss_written_competition">
+    <class name="com.sundayschool.persistence.StudentInfo" table="ss_oral_competition">
         <meta attribute="class-description">
             This class contains the employee detail.
         </meta>
@@ -22,8 +22,8 @@
         <property name="judge1Marks" column="judge1_marks" type="integer"/>
         <property name="judge2Marks" column="judge2_marks" type="integer"/>
         <property name="judge3Marks" column="judge3_marks" type="integer"/>
-        <!--<property name="judge4Marks" column="judge4_marks" type="integer"/>-->
-        <!--<property name="judge5Marks" column="judge5_marks" type="integer"/>-->
-        <!--<property name="judge6Marks" column="judge6_marks" type="integer"/>-->
+        <property name="judge4Marks" column="judge4_marks" type="integer"/>
+        <property name="judge5Marks" column="judge5_marks" type="integer"/>
+        <property name="judge6Marks" column="judge6_marks" type="integer"/>
     </class>
 </hibernate-mapping>
