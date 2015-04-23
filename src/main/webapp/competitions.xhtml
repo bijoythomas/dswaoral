@@ -27,6 +27,7 @@
                         <h:outputLabel for="church" value="Church"/>
                         <p:selectOneMenu id="rchurch" label="Select Church" value="#{registrationBean.church}">
                             <f:selectItems value="#{registrationBean.availableChurches}"/>
+                            <f:selectItem itemValue="All" itemLabel="All"/>
                         </p:selectOneMenu>
 
                         <h:outputLabel for="category" value="Category"/>
