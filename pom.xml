@@ -253,7 +253,7 @@
             <id>local</id>
             <properties>
                 <db.username>root</db.username>
-                <db.password>dbguru</db.password>
+                <db.password></db.password>
                 <db.schema>oral</db.schema>
             </properties>
         </profile>

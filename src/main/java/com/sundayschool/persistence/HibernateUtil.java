@@ -24,6 +24,13 @@ public class HibernateUtil
             String schema = properties.getProperty("db.schema");
             String dbHost = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
             String dbPort = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
+            if (dbHost == null) {
+            	dbHost = "localhost";
+            	dbPort = "3306";
+            	schema = "oral";
+            	username = "root";
+            	password = "";
+            }
             dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + schema;
             configuration.setProperty("hibernate.connection.url", dbUrl);
             configuration.setProperty("hibernate.connection.username", username);

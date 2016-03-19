@@ -202,6 +202,77 @@
                         <br/>
                     </h:form>
                 </p:tab>
+            	<p:tab id="tab3" title="Overall Winners">
+                    <h:form>
+                        <table>
+                            <tr>
+                                <td valign="top">
+                                    <p:panelGrid id="winners-panel" columns="2">
+                                        <f:facet name="header">Winners</f:facet>
+										<h:outputLabel for="winnersgroup" value="Winners Groups"/>
+                                        <p:selectOneMenu id="winnersgroup" label="Select Winners Group"
+                                                         value="#{registrationBean.winnersGroup}">
+                                            <f:selectItems value="#{registrationBean.winnersGroups}"/>
+                                           
+                                        </p:selectOneMenu>
+                                        <f:facet name="footer">
+                                            <p:commandButton id="winners-search" value="Show Winners"
+                                                             action="#{registrationBean.findWinners}" update="winners-list"/>
+                                        </f:facet>
+                                    </p:panelGrid>
+                                    <p:blockUI block="winners-panel" trigger="winners-search"/>
+                                </td>
+                                <td valign="top">
+                                    <p:dataTable id="winners-list" var="winnersInfo" value="#{registrationBean.winnersList}"
+                                                 styleClass="order-table"
+                                                 headerClass="order-table-header"
+                                                 rowClasses="order-table-odd-row,order-table-even-row">
+
+                                        <p:column sortBy="#{winnersInfo.firstName}">
+                                            <f:facet name="header">
+                                                <h:outputText value="First Name"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.firstName}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{winnersInfo.middleName}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Middle Name"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.middleName}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{winnersInfo.lastName}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Last Name"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.lastName}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{winnersInfo.church}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Church"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.church}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{winnersInfo.ssGroup}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Group"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.ssGroup}"/>
+                                        </p:column>
+
+                                        <p:column sortBy="#{winnersInfo.totalMarks}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Total Marks"/>
+                                            </f:facet>
+                                            <h:outputText value="#{winnersInfo.totalMarks}"/>
+                                        </p:column>
+                                    </p:dataTable>
+
+                                </td>
+                            </tr>
+                        </table>
+                        <p><h:messages/></p>
+                    </h:form>
+                </p:tab>
             </p:tabView>
         </ui:define>
     </ui:composition>

@@ -7,7 +7,7 @@ import java.util.*;
 import static com.sundayschool.constants.Categories.*;
 import static java.util.Arrays.asList;
 
-public class StudentInfo {
+public class StudentInfo{
     private int id;
     String firstName;
     String middleName;
@@ -39,6 +39,24 @@ public class StudentInfo {
 
     public StudentInfo() {
     }
+    
+   public StudentInfo(StudentInfo s) {
+	   this.firstName = s.firstName;
+       this.middleName = s.middleName;
+       this.lastName = s.lastName;
+       this.region = s.region;
+       this.church = s.church;
+       this.category = s.category;
+       this.ssGroup = s.ssGroup;
+       this.venue = s.venue;
+       categoryCode = categoryMapLookup.get(s.category);
+       this.judge1Marks = s.judge1Marks;
+       this.judge2Marks = s.judge2Marks;
+       this.judge3Marks = s.judge3Marks;
+       this.judge4Marks = s.judge4Marks;
+       this.judge5Marks = s.judge5Marks;
+       this.judge6Marks = s.judge6Marks;
+   }
 
     public StudentInfo(String firstName, String middleName, String lastName, String region, String church, String category, String ssGroup, String venue) {
         this.firstName = firstName;

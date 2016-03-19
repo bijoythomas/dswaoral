@@ -4,6 +4,7 @@ import com.sundayschool.persistence.HibernateUtil;
 import com.sundayschool.persistence.RegionToChurch;
 import com.sundayschool.persistence.StudentInfo;
 import com.sundayschool.persistence.UserToRegion;
+import com.sundayschool.persistence.WinnersInfo;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
@@ -38,9 +39,148 @@ public class RegistrationBean {
     List<String> venueChurches;
     List<String> availableCategories;
     List<String> availableGroups;
+    String winnersGroups3to7 = "Groups 3 to 7";
+    String winnersGroups1to2 = "Groups 1 and 2";
+    String churchWinners = "Churches";
+    List<String> winnersGroups;
+    protected String winnersGroup;
+    public String getWinnersGroup() {
+		return winnersGroup;
+	}
 
+	public void setWinnersGroup(String winnersGroup) {
+		this.winnersGroup = winnersGroup;
+	}
+
+	protected List<WinnersInfo> winnersList = new ArrayList<WinnersInfo>();
     private PieChartModel pieModel = new PieChartModel();
 
+    public List<String> getWinnersGroups() {
+        return Arrays.asList(winnersGroups1to2, winnersGroups3to7, churchWinners);
+    }
+
+    public void setWinnersGroups(List<String> winnersGroups) {
+        this.winnersGroups = winnersGroups;
+    }
+    
+    public String findWinners() {
+    	this.winnersList.clear();
+    	List<String> groupsToQuery, categoriesToQuery;
+    	Map<String, WinnersInfo> winnersMap = new HashMap<String, WinnersInfo>();
+    	String region = getRegionForUser();
+    	if (this.winnersGroup.equals(winnersGroups1to2)) {
+    		groupsToQuery = Arrays.asList(GROUP_1, GROUP_2);
+    		categoriesToQuery = Arrays.asList(GROUP_SONG_ENGLISH, GROUP_SONG_MALAYALAM, SOLO_SONG_ENGLISH, SOLO_SONG_MALAYALAM);
+    	} else if (this.winnersGroup.equals(winnersGroups3to7)){
+    		groupsToQuery = Arrays.asList(GROUP_3, GROUP_4, GROUP_5, GROUP_6, GROUP_7);
+    		categoriesToQuery = getAvailableCategories(); // All categories
+    	} else {
+    		// church winners
+    		groupsToQuery = Arrays.asList(GROUP_1, GROUP_2, GROUP_3, GROUP_4, GROUP_5, GROUP_6, GROUP_7);
+    		categoriesToQuery = getAvailableCategories(); // All categories
+    	}
+    	
+    	for (String ssGroup: groupsToQuery) {
+    		for (String category: categoriesToQuery) {
+    			final String ssCategory = category;
+    			int highest = 3, currentScore=Integer.MIN_VALUE;
+    			List<StudentInfo> winnersInGroupAndCategory = new LinkedList<StudentInfo>();
+    			String dbCategory = categoryMapLookup.get(category);
+    			Session session = HibernateUtil.getSessionFactory().openSession();
+    			Query query = session.createQuery("from StudentInfo where region = :region and ssGroup like :ssGroup and categoryCode like :dbCategory");
+    			query.setParameter("region", region);
+    	        query.setParameter("ssGroup", ssGroup);
+    	        query.setParameter("dbCategory", dbCategory);
+    	        List<StudentInfo> studentsinGroup = query.list();
+    	        session.close();
+    	        
+    	        if (this.winnersGroup.equals(churchWinners)) {
+    	        	// replace names with Church
+    	        	for(StudentInfo s: studentsinGroup) {
+    	        		s.setFirstName(s.getChurch());
+    	        		s.setMiddleName("");
+    	        		s.setLastName("");
+    	        	}
+    	        } else if (category.equals(GROUP_SONG_ENGLISH) || category.equals(GROUP_SONG_MALAYALAM)) {
+    	        	List<StudentInfo> tmp = new LinkedList<StudentInfo>();
+    	        	for(StudentInfo student: studentsinGroup) {
+    	        		String[] members = student.getLastName().trim().split(",");
+    	        		for(String fullName: members) {
+    	        			String[] name = fullName.trim().split(" ");
+    	        			StudentInfo clone = new StudentInfo(student);
+    	        			if (name.length == 3) {
+    	        				clone.setFirstName(name[0]);
+        	        			clone.setMiddleName(name[1]);
+        	        			clone.setLastName(name[2]);	
+    	        			} else if (name.length == 2) {
+    	        				clone.setFirstName(name[0]);
+        	        			clone.setLastName(name[1]);
+    	        			} else {
+    	        				clone.setFirstName(name[0]);
+    	        				clone.setLastName("");
+    	        			}
+    	        			tmp.add(clone);
+    	        		}
+    	        	}
+    	        	studentsinGroup.clear();
+    	        	studentsinGroup.addAll(tmp);
+    	        }
+    	        Collections.sort(studentsinGroup, new Comparator<StudentInfo>() {
+    	        	public int compare(StudentInfo a, StudentInfo b) {
+    	        		return b.getTotalMarks() - a.getTotalMarks();
+    	        		
+    	        	}
+				});
+    	        for(StudentInfo student: studentsinGroup) {
+    	        	int score = student.getTotalMarks();
+    	        	if (score != currentScore) {
+    	        		currentScore = score;
+    	        		highest--;
+    	        	}
+    	        	
+    	        	if (highest < 0) {
+    	        		break;
+    	        	}
+    	        	
+    	        	String firstName = student.getFirstName(), lastName = student.getLastName(), church = student.getChurch(), group = student.getSsGroup();
+    	        	String middleName = (student.getMiddleName() == null? "" : student.getMiddleName());
+    	        	//if (firstName.contains("Team")) {
+    	        		// We have a group. Split into individual members
+    	        	//}
+    	        	String key = (winnersGroup.equals(churchWinners)) ?
+    	        			firstName :
+    	        			firstName + " " + middleName + " " + lastName + " " + group + " " + church;
+    	        	WinnersInfo winner = winnersMap.get(key);
+    	        	if (winner == null) {
+    	        		winner = new WinnersInfo(firstName, middleName, lastName, church, group, 0);
+    	        		winnersMap.put(key, winner);
+    	        	}
+    	        	winner.setTotalMarks(winner.getTotalMarks() + highest + 1);
+    	        	
+    	        }
+    	        
+    		}
+    	}
+    	this.winnersList.addAll(winnersMap.values());
+//    	WinnersInfo winner = new WinnersInfo();
+//    	winner.setFirstName("Bijoy");
+//    	winner.setMiddleName("Jacob");
+//    	winner.setLastName("Thomas");
+//    	winner.setChurch("St. Marys FB");
+//    	winner.setSsGroup("Group 4");
+//		winner.setTotalMarks(12);
+//    	winnersList.add(winner);
+    	return null;	
+    }
+      
+    public List<WinnersInfo> getWinnersList() {
+		return winnersList;
+	}
+
+	public void setWinnersList(List<WinnersInfo> winnersList) {
+		this.winnersList = winnersList;
+	}
+    
     public String remove(StudentInfo studentInfo) {
         studentInfoList.remove(studentInfo);
         return null;
@@ -340,7 +480,6 @@ public class RegistrationBean {
     }
 
     public List<String> getAvailableCategories() {
-//        return Arrays.asList(BIBLE_QUIZ, DRAWING, ESSAY_WRITING, STORY_WRITING, POETRY);
         return Arrays.asList(GROUP_SONG_ENGLISH, GROUP_SONG_MALAYALAM, SOLO_SONG_ENGLISH, SOLO_SONG_MALAYALAM, ELOCUTION);
     }
 
