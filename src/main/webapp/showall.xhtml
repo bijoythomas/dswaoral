@@ -273,6 +273,115 @@
                         <p><h:messages/></p>
                     </h:form>
                 </p:tab>
+                <p:tab id="tab4" title="All Participants">
+                    <h:form>
+                        <table>
+                            <tr>
+                                <td valign="top">
+                                    <p:panelGrid id="panel" columns="2">
+                                        <f:facet name="header">Search Form</f:facet>
+                                        <h:outputLabel for="church" value="Church"/>
+                                        <p:selectOneMenu id="church" label="Select Church"
+                                                         value="#{registrationBean.church}">
+                                            <f:selectItems value="#{registrationBean.availableChurches}"/>
+                                            <f:selectItem itemValue="All" itemLabel="All"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel for="category" value="Category"/>
+                                        <p:selectOneMenu id="category" label="Select Category"
+                                                         value="#{registrationBean.category}">
+                                            <f:selectItems value="#{registrationBean.availableCategories}"/>
+                                            <f:selectItem itemValue="All" itemLabel="All"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel for="group" value="Group"/>
+                                        <p:selectOneMenu id="group" label="Select Group"
+                                                         value="#{registrationBean.group}">
+                                            <f:selectItems value="#{registrationBean.availableGroups}"/>
+                                            <f:selectItem itemValue="All" itemLabel="All"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel for="venue" value="Venue"/>
+                                        <p:selectOneMenu id="venue" label="Select Venue"
+                                                         value="#{registrationBean.venue}">
+                                            <f:selectItems value="#{registrationBean.venueChurches}"/>
+                                            <f:selectItem itemValue="All" itemLabel="All"/>
+                                        </p:selectOneMenu>
+
+                                        <f:facet name="footer">
+                                            <p:commandButton id="psearch" value="Search"
+                                                             action="#{registrationBean.allParticipants}" update="participantlist"/>
+                                        </f:facet>
+                                    </p:panelGrid>
+                                    <p:blockUI block="panel" trigger="psearch"/>
+                                </td>
+                                <td valign="top">
+                                    <p:dataTable id="participantlist" var="participant" value="#{registrationBean.participantList}"
+                                                 styleClass="order-table"
+                                                 headerClass="order-table-header"
+                                                 rowClasses="order-table-odd-row,order-table-even-row">
+                                        <p:column sortBy="#{participant.name}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Name"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.name}"/>
+                                        </p:column>
+                                       
+                                        <p:column sortBy="#{participant.church}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Church"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.church}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.ssGroup}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Group"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.ssGroup}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.soloMalayalam}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Solo Malayalam"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.soloMalayalam}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.soloEnglish}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Solo English"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.soloEnglish}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.groupEnglish}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Group English"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.groupEnglish}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.groupMalayalam}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Group Malayalam"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.groupMalayalam}"/>
+                                        </p:column>
+                                        <p:column sortBy="#{participant.elocution}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Elocution"/>
+                                            </f:facet>
+                                            <h:outputText value="#{participant.elocution}"/>
+                                        </p:column>
+                                        
+                                        
+                                    </p:dataTable>
+
+                                    <p:commandButton value="Export XLS" ajax="false" icon="images/excel.png">
+                                        <p:dataExporter type="xls" target="participantlist" fileName="studentsList"/>
+                                    </p:commandButton>
+                                </td>
+                            </tr>
+                        </table>
+                        <p><h:messages/></p>
+                    </h:form>
+                </p:tab>
             </p:tabView>
         </ui:define>
     </ui:composition>

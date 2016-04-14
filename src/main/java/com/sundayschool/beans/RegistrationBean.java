@@ -1,6 +1,7 @@
 package com.sundayschool.beans;
 
 import com.sundayschool.persistence.HibernateUtil;
+import com.sundayschool.persistence.Participant;
 import com.sundayschool.persistence.RegionToChurch;
 import com.sundayschool.persistence.StudentInfo;
 import com.sundayschool.persistence.UserToRegion;
@@ -44,6 +45,8 @@ public class RegistrationBean {
     String churchWinners = "Churches";
     List<String> winnersGroups;
     protected String winnersGroup;
+    List<Participant> participantList = new LinkedList<Participant>();
+    
     public String getWinnersGroup() {
 		return winnersGroup;
 	}
@@ -61,6 +64,88 @@ public class RegistrationBean {
 
     public void setWinnersGroups(List<String> winnersGroups) {
         this.winnersGroups = winnersGroups;
+    }
+    
+    public String allParticipants() {
+    	this.participantList.clear();
+    	List<String> groupsToQuery, categoriesToQuery;
+    	groupsToQuery = Arrays.asList(GROUP_1, GROUP_2, GROUP_3, GROUP_4, GROUP_5, GROUP_6, GROUP_7);
+    	String region = getRegionForUser();
+    	Map<String, Participant> participantMap = new HashMap<String, Participant>();
+    	categoriesToQuery = getAvailableCategories();
+    	
+    	for (String ssGroup: groupsToQuery) {
+    		for (String category: categoriesToQuery) {
+    			final String ssCategory = category;
+    			List<Participant> pariticipants = new LinkedList<Participant>();
+    			String dbCategory = categoryMapLookup.get(category);
+    			Session session = HibernateUtil.getSessionFactory().openSession();
+    			Query query = session.createQuery("from StudentInfo where region = :region and ssGroup like :ssGroup and categoryCode like :dbCategory");
+    			query.setParameter("region", region);
+    	        query.setParameter("ssGroup", ssGroup);
+    	        query.setParameter("dbCategory", dbCategory);
+    	        List<StudentInfo> studentsinGroup = query.list();
+    	        session.close();
+    	        
+    	        if (category.equals(GROUP_SONG_ENGLISH) || category.equals(GROUP_SONG_MALAYALAM)) {
+    	        	List<Participant> tmp = new LinkedList<Participant>();
+    	        	for(StudentInfo student: studentsinGroup) {
+    	        		String[] members = student.getLastName().trim().split(",");
+    	        		for(String fullName: members) {
+    	        			String[] name = fullName.trim().split(" ");
+    	        			
+    	        			String concatedName;
+    	        			if (name.length == 3) {
+    	        				concatedName = name[0] + " " + name[1] + " " + name[2];
+    	        			} else if (name.length == 2) {
+    	        				concatedName = name[0] + " " + "" + " "+ name[1];
+    	        			} else {
+    	        				concatedName = name[0] + " " + "" + " " + "";
+    	        			}
+    	        			Participant clone = new Participant(concatedName);
+    	        			clone.setChurch(student.getChurch());
+    	        			clone.setSsGroup(student.getSsGroup());
+    	        			tmp.add(clone);
+    	        		}
+    	        	}
+    	        	pariticipants.addAll(tmp);
+    	        } else {
+    	        	for(StudentInfo student: studentsinGroup) {
+    	        		String middleName = (student.getMiddleName() == null)? "" : student.getMiddleName().trim();
+    	        		String lastName = (student.getLastName() == null)? "" : student.getLastName().trim();
+    	        		Participant p = new Participant(student.getFirstName().trim() + " " + middleName + " " + lastName);
+    	        		p.setChurch(student.getChurch());
+    	        		p.setSsGroup(student.getSsGroup());
+    	        		pariticipants.add(p);
+    	        	}
+    	        }
+    	       
+    	        for(Participant p: pariticipants) {
+    	        	String key = p.getName() + p.getSsGroup() + p.getChurch();
+    	        	Participant fromMap = participantMap.get(key);
+    	        	if (fromMap == null) {
+    	        		fromMap = p;
+    	        		participantMap.put(key, p);
+    	        	}
+    	        	
+    	        	if (category.equals(GROUP_SONG_ENGLISH)) {
+    	        		fromMap.setGroupEnglish("YES");
+    	        	} else if (category.equals(GROUP_SONG_MALAYALAM)) {
+    	        		fromMap.setGroupMalayalam("YES");
+    	        	} else if (category.equals(SOLO_SONG_ENGLISH)) {
+    	        		fromMap.setSoloEnglish("YES");
+    	        	} else if (category.equals(SOLO_SONG_MALAYALAM)) {
+    	        		fromMap.setSoloMalayalam("YES");
+    	        	} else if (category.equals(ELOCUTION)) {
+    	        		fromMap.setElocution("YES");
+    	        	}
+    	        }
+    	        
+    	        
+    		}
+    	}
+    	this.participantList.addAll(participantMap.values());
+    	return null;
     }
     
     public String findWinners() {
@@ -114,6 +199,7 @@ public class RegistrationBean {
         	        			clone.setLastName(name[2]);	
     	        			} else if (name.length == 2) {
     	        				clone.setFirstName(name[0]);
+    	        				clone.setMiddleName("");
         	        			clone.setLastName(name[1]);
     	        			} else {
     	        				clone.setFirstName(name[0]);
@@ -142,8 +228,8 @@ public class RegistrationBean {
     	        		break;
     	        	}
     	        	
-    	        	String firstName = student.getFirstName(), lastName = student.getLastName(), church = student.getChurch(), group = student.getSsGroup();
-    	        	String middleName = (student.getMiddleName() == null? "" : student.getMiddleName());
+    	        	String firstName = student.getFirstName().trim(), lastName = student.getLastName().trim(), church = student.getChurch(), group = student.getSsGroup();
+    	        	String middleName = (student.getMiddleName() == null? "" : student.getMiddleName().trim());
     	        	//if (firstName.contains("Team")) {
     	        		// We have a group. Split into individual members
     	        	//}
@@ -437,8 +523,18 @@ public class RegistrationBean {
     public void setSearchList(List<StudentInfo> searchList) {
         this.searchList = searchList;
     }
+    
+    
 
-    public List<String> getAvailableChurches() {
+    public List<Participant> getParticipantList() {
+		return participantList;
+	}
+
+	public void setParticipantList(List<Participant> participantList) {
+		this.participantList = participantList;
+	}
+
+	public List<String> getAvailableChurches() {
         String regionForUser = getRegionForUser();
         Session session = HibernateUtil.getSessionFactory().openSession();
         Query query = session.createQuery("from RegionToChurch where region like :region");
