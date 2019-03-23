@@ -22,24 +22,23 @@ public class HibernateUtil
             username = properties.getProperty("db.user");
             password = properties.getProperty("db.passwd");
             String schema = properties.getProperty("db.schema");
-//            String dbHost = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
-//            String dbPort = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
-//
             String dbHost = null;
             String dbPort = null;
-            String envPassword = System.getenv("MYSQL_PASSWORD");
+            String envPassword = System.getenv("DB_PASSWORD");
             if (envPassword == null) {
-                dbHost = "localhost";
-                dbPort = "3306";
-                password = "";
+            	dbHost = "localhost";
+            	dbPort = "3306";
+            	password = "";
             } else {
-                dbHost = "dswacwc-mysql";
-                dbPort = "3306";
+            	dbHost = "sscompetitions-mysql";
+            	dbPort = "3306";
             }
             dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + schema;
+            System.out.println(dbUrl);
             configuration.setProperty("hibernate.connection.url", dbUrl);
             configuration.setProperty("hibernate.connection.username", username);
             configuration.setProperty("hibernate.connection.password", password);
+            System.out.println("username" + username + " and password " + password);
             return configuration.configure().buildSessionFactory();
         }
         catch (Throwable ex) {
